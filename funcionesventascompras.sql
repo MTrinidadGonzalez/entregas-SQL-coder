@@ -75,3 +75,50 @@ END //
 DELIMITER ;
 
 SELECT fn_MontoTotalDeCompraHastaFecha(1,'2024-02-29') as MontoTotalCompradosHastaLaFecha; 
+
+
+-- Función para eliminar registros de id_product de tablas Ventas/Compras (para usar los triggers)
+DROP FUNCTION IF EXISTS fn_eliminar_registro_por_id_product_tabla;
+
+DELIMITER //
+CREATE FUNCTION fn_eliminar_registro_por_id_product_tabla(p_id_product INT, p_tabla VARCHAR(255)) RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE success BOOLEAN DEFAULT TRUE;
+
+    IF p_tabla = 'Compras' THEN
+        DELETE FROM Compras WHERE id_product_fk = p_id_product;
+    ELSEIF p_tabla = 'Ventas' THEN
+        DELETE FROM Ventas WHERE id_product_fk = p_id_product;
+    ELSE
+        SET success = FALSE;
+    END IF;
+    IF ROW_COUNT() = 0 THEN
+        SET success = FALSE;
+    END IF;
+    RETURN success;
+END //
+DELIMITER ;
+
+SELECT fn_eliminar_registro_por_id_product_tabla(5, 'Compras');
+
+SELECT fn_eliminar_registro_por_id_product_tabla(5, 'Ventas');
+
+
+-- Funcion eliminar rregistro de tabla products x su pk_id_product
+DROP FUNCTION IF EXISTS fn_eliminar_registro_por_pk_id_product;
+DELIMITER //
+CREATE FUNCTION fn_eliminar_registro_por_pk_id_product(p_pk_id_product INT) RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE success BOOLEAN DEFAULT TRUE;
+    DELETE FROM Products WHERE pk_id_product = p_pk_id_product;
+    IF ROW_COUNT() = 0 THEN
+        SET success = FALSE;
+    END IF;
+
+    RETURN success;
+END 
+// DELIMITER ;
+
+SELECT fn_eliminar_registro_por_pk_id_product(5);
