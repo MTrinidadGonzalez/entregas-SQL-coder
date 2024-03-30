@@ -18,3 +18,27 @@ DROP SCHEMA IF exists MACA_HERBORISTERIA;
 CREATE SCHEMA IF NOT exists MACA_HERBORISTERIA;
 USE MACA_HERBORISTERIA;
 
+
+Funciones:
+1-	fn_TotalGramosDeProductoVendidos:
+Lo que realiza esta función es recibir como parámetros el id de un producto  referenciado de la tabla Products (de tipo INT) y una fecha límite (de tipo DATE). Luego busca en la tabla Ventas ese producto y hace la suma de los montos vendidos y lo almacena en la variable v_total_gramos_vendidos (de tipo número). 
+2-	fn_MontoTotalVentas:
+Recibe los mismos parámetros de entrada que la función anterior y busca en la tabla de ventas, solo que en este caso devuelve el monto total (o sea el dinero/costo) y lo almacena en la variable  v_total_monto.
+
+3-	fn_eliminar_registro_por_id_product_tabla: Esta función es para eliminar una venta o compra en base a cualquiera de las tablas ingresadas (Ventas/Compras), y al id de producto ingresado (pk_id_product), ya que son tablas hijas que referencian a la tabla Products. Esta función y la siguiente son para luego poder utilizar los triggers. 
+4-	fn_eliminar_registro_por_pk_id_product: Funciona para ingresar un id de un producto y que se elimine de la tabla Products. 
+Procedimientos:
+1-	ventas_x_fecha_con_montos:
+Tiene como parámetro de salida p_fecha que es una fecha y como parámetro de salida total_ventas que es de tipo numérico. Realiza un conteo dentro de la tabla Ventas la cantidad de ventas ralizadas hasta la fecha indicada y la suma total (dinero ingresado) de la columna monto_de_venta. 
+2-	El segundo procedimiento es similar al anterior, solo que en este caso, se ingresa un producto específico por su id (que está vinculado a la tabla Products) y buesca el monto total de las ventas hasta la fecha indicada. 
+
+
+TRiggers:
+1-	TRG_compras_elimindas: 
+Este trigger registra en la tabla registro_compras_eliminadas antes (begin) de que una compra sea eliminada. 
+2-	TRG_ventas_eliminadas:
+También al igual que el anterior almacena la venta eliminada en la tabla registro_ventas_eliminadas.
+3-	TRG_eliminar_producto:
+Este trigger se realiza después de la acción (after) y los archiva en la tabla registro_productos_eliminados. En verdad los dos triggers anteriores son para que luego pueda realizarse la eliminación del producto ya que los id_product de los triggers anteriores están referenciados de esta tabla Products. 
+
+
